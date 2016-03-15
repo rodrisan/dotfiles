@@ -1,0 +1,214 @@
+[user]
+	email = user@gmail.com
+	name = Name Lastname
+[apply]
+	whitespace = fix
+[core]
+	pager = less -Mi -+F
+	safecrlf = warn
+	attributesfile = ~/.revenant/.gitattributes
+	excludesfile = ~/.revenant/.gitignore
+	autocrlf = Input
+	editor = vi
+	filemode = true
+    	whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+    	precomposeunicode = false
+[color]
+    	ui = auto # covers diff = true, status = auto, branch = auto
+    	interactive = auto
+[color "branch"]
+    	current = yellow reverse
+    	local = yellow
+    	remote = green
+[color "diff"]
+    	meta = yellow bold
+    	frag = magenta bold # line info
+    	old = red # deletions
+    	new = green # additions
+[color "status"]
+    	added = yellow
+	changed = green
+    	untracked = cyan
+[color "diff-highlight"]
+    	oldNormal = "red bold"
+    	oldHighlight = "red bold 52"
+    	newNormal = "green bold"
+    	newHighlight = "green bold 22"
+[log]
+	date = relative
+[grep]
+	extendedRegexp = true
+[merge]
+	tool = vimdiff
+	defaultToUpstream = true
+	verbosity = 4
+    	log = true
+[alias]
+	# Show all the alias
+	aliases = !git config --get-regexp alias
+
+	# Initial commit
+	this = !git init && ( [[ -n $(ls) ]] || touch .gitignore ) && git add . && git commit -m \"initial commit\"
+
+	# Basic alias
+	st = status
+	br = branch
+	co = checkout
+	di = diff
+	
+	#Push/pull/commit
+	publish = !git push -u origin $(git branch-name)
+	unpublish = !git push origin :$(git branch-name)
+	pdev = push origin develop
+	udev = pull origin develop
+	ppro = push origin master
+	upro = pull origin master
+	amend = commit --amend
+	pp = !git pull && git push
+	cm = commit
+	cmm = commit -m
+	ci = commit --verbose
+	sp = ![[ -z $(git status --porcelain -uno) ]] && git pull || git stash && git pull && git stash pop
+	spp = ![[ -z $(git status --porcelain -uno) ]] && git pull || git stash && git pull && git push && git stash pop
+
+	# Show verbose output about tags, branches or remotes
+	tags = tag -l
+	branches = branch -a
+	remotes = remote -v
+
+	# Find branches containing commit
+	fb = "!f() { git branch -a --contains $1; }; f"
+
+	# Find tags containing commit
+	ft = "!f() { git describe --always --contains $1; }; f"
+
+	# Find commits by source code
+	fc = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short -S$1; }; f"
+
+	# Find commits by commit message
+	fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+
+	#Flow
+	fs = flow feature start
+	ff = flow feature finish
+	
+	#Log
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+	lgp = log --stat -p
+	lgs = log --stat
+	who = shortlog -s --
+	grShort = log --graph --pretty=oneline --decorate --abbrev-commit
+	grTwoLines = log --graph --format=format:'%C(red)%h%C(reset) %C(green)(%cr)%C(reset)%C(bold yellow)%d%C(reset) %C(yellow)%an%C(reset)%n''%C(white)%s%C(reset)' --abbrev-commit
+	grFull = log --graph --format=format:'%C(red)%h%C(reset) %C(green)(%cr)%C(reset)%C(bold yellow)%d%C(reset) %C(yellow)%an%C(reset)%n''%C(white)%s%C(reset)%n%+b' --abbrev-commit
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	peeps = !git log --pretty=format:%aN | sort | uniq -c | sort -rn
+	graph = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	gr = !git grtwolines --all
+	grTopology = !git grtwolines --all --simplify-by-decoration
+	last = log -1 HEAD
+	visual = !gitk
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	lc = log ORIG_HEAD.. --stat --no-merges
+	whois = !sh -c 'git log -i --pretty=\"format:%an <%ae>\" --author=\"$1\" | sort -u' -
+	whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
+	merge-span = "!f() { echo $(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f1)$1$(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f2); }; f"
+	merge-log = !git log `git merge-span .. $1`
+	merge-diff = !git diff `git merge-span ... $1`
+	merge-difftool = !git difftool `git merge-span ... $1`
+	branch-name = !git rev-parse --abbrev-ref HEAD
+	
+	# Files and diffs
+	type = cat-file -t
+	dump = cat-file -p
+	dl = !git ll -1
+	dlc = diff --cached HEAD^
+	la = !git config -l | grep alias | cut -c 7-
+	assume = update-index --assume-unchanged
+	unassume = update-index --no-assume-unchanged
+	assumed = !git ls-files -v | grep ^h | cut -c 3-
+
+	# Merge
+	edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; $EDITOR `f`"
+	add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+	smash = merge --no-commit --log
+	eat = branch -M
+	ours = "!f() { git checkout --ours $@ && git add $@; }; f"
+	theirs = "!f() { git checkout --theirs $@ && git add $@; }; f"
+	delete-merged-branches = !git co master && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d
+
+  	# Rebase
+	rebase-branch = !git rebase -i `git merge-base master HEAD`
+	unstage = reset HEAD
+	diffc = diff --cached
+	
+	# Prune
+	prune-all = !git remote | xargs -n 1 git remote prune
+
+	# Update submodules
+	ppu = !git pp && git submodule sync && git submodule update --init
+	sup = !git submodule sync && git submodule update --init
+	
+	#list files
+	ls = !git status -suno
+	ls-modified = !git status --porcelain -uno | awk 'match($1, /M/) {print $2}'
+	ls-added = !git status --porcelain -uno | awk 'match($1, /A/) {print $2}'
+	ls-deleted = !git status --porcelain -uno | awk 'match($1, /D/) {print $2}'
+	ls-renamed = !git status --porcelain -uno | awk 'match($1, /R/) {print $2}'
+	ls-copied = !git status --porcelain -uno | awk 'match($1, /C/) {print $2}'
+	ls-updated = !git status --porcelain -uno | awk 'match($1, /U/) {print $2}'
+	ls-staged = !git status --porcelain -uno | grep -P '^[MA]' | awk '{ print $2 }'
+	ls-untracked = !git status --porcelain -uall | awk '$1 == \"??\" {print $2}'
+	
+	# Various
+	todo = !python ~/lib/t/t.py --task-dir$(git rev-parse --show-toplevel)--list TODO
+	bug = !python ~/lib/t/t.py --task-dir$(git rev-parse --show-toplevel)--list BUGS
+	alias = "!sh -c '[ $# = 2 ] && git config --global alias.\"$1\" \"$2\" && exit 0 || [ $# = 1 ] && [ $1 = \"--list\" ] && git config --list | grep \"alias\\.\" | sed \"s/^alias\\.\\([^=]*\\)=\\(.*\\).*/\\1@@@@=>@@@@\\2/\" | sort | column -ts \"@@@@\" && exit 0 || echo \"usage: git alias <new alias> <original command>\\n       git alias --list\" >&2 && exit 1' -"
+	ignore = "!sh -c '([ $# = 2 ] && ([ \"$1\" = \"--local\" ] && echo \"$2\" >> \"./$(git rev-parse --show-cdup)/.git/info/exclude\" || ([ \"$2\" = \"--local\" ] && echo \"$1\" >> \"./$(git rev-parse --show-cdup)/.git/info/exclude\"))) || ([ $# = 1 ] && (([ \"$1\" == \"--list\" ] && git ls-files -i --exclude-standard) || (([ ! -e .gitignore ] && touch .gitignore || echo \"$(cat .gitignore)\" > .gitignore) && echo \"$1\" >> .gitignore))) || echo \"usage: git ignore <file>\\n       git ignore --local <file>\\n       git ignore --list\" >&2 && exit 1' -"
+	cs = !git ls-staged | grep.php| xargs phpcs
+	recreate = "!f() { [[ -n $@ ]] && git checkout \"$@\" && git unpublish && git checkout master && git branch -D \"$@\" && git checkout -b \"$@\" && git publish; }; f"
+	code-review = difftool origin/master...
+	
+	# Fixes
+	fixws = "!      if (! git diff-index --quiet --cached HEAD); then                 git diff-files --quiet . ;         export NEED_TO_STASH=$? ;                 git commit -m FIXWS_SAVE_INDEX &&         if [ 1 = $NEED_TO_STASH ] ; then git stash save FIXWS_SAVE_TREE; fi &&         git rebase --whitespace=fix HEAD~ &&         git reset --soft HEAD~ &&         if [ 1 = $NEED_TO_STASH ] ; then git stash pop; fi ;       fi"
+	fixws-global-tree-and-index = "!      if (! git diff-files --quiet .) &&          (! git diff-index --quiet --cached HEAD) ; then         git commit -m FIXWS_SAVE_INDEX &&         git add -u :/ &&         git commit -m FIXWS_SAVE_TREE &&         git rebase --whitespace=fix HEAD~2 &&         git reset HEAD~ &&         git reset --soft HEAD~ ;       elif (! git diff-files --quiet .) ; then         git add -u :/ &&         git commit -m FIXWS_SAVE_TREE &&         git rebase --whitespace=fix HEAD~ &&         git reset HEAD~ ;       elif (! git diff-index --quiet --cached HEAD) ; then         git commit -m FIXWS_SAVE_INDEX &&         git rebase --whitespace=fix HEAD~ &&         git reset --soft HEAD~ ;       fi"
+	fixws-local-tree = "!      cd \"$GIT_PREFIX\" &&       if git diff-index --quiet --cached HEAD ; then         if ! git diff-files --quiet . ; then           export GIT_EDITOR=: &&           git -c apply.whitespace=fix add -ue . &&           git checkout . &&           git reset ;         fi ;       else         echo 'Your index is dirty! Bailing ...' >&2 && exit 1 ;       fi"
+	fixws-index = "!      cd `git rev-parse --show-toplevel` &&       if git diff-files --quiet . ; then         if ! git diff-index --quiet --cached HEAD ; then           export GIT_EDITOR=: &&           git reset &&           git -c apply.whitespace=fix add -ue . &&           git checkout . ;         fi ;       else         echo 'Your tree is dirty! Bailing ...' >&2 && exit 1 ;       fi"
+	fixws-local-tree-and-index = "!      cd \"$GIT_PREFIX\" &&       if (! git diff-files --quiet `git rev-parse --show-toplevel`) &&          (! git diff-index --quiet --cached HEAD) ; then         git commit --allow-empty -m FIXWS_SAVE_INDEX &&         git fixws-local-tree &&         git stash save FIXWS_SAVE_TREE &&         git reset --soft 'HEAD^' &&         git fixws-index &&         git stash pop ;       elif (! git diff-files --quiet .) ; then         git fixws-local-tree ;       elif (! git diff-index --quiet --cached HEAD) ; then         git fixws-index ;       fi"
+	stashlist = !git stash list --date=default
+[push]
+	default = simple
+	followTags = true
+[diff]
+	guitool = vimdiff
+	tool = vimdiff
+    	renames = copies
+[sendemail]
+	smtpencryption = tls
+	smtpserver = smtp.gmail.com
+	smtpuser = user@gmail.com
+	smtpserverport = 587
+[mergetool]
+	keepBackup = true
+[i18n]
+	filesEncoding = utf-8
+[gui]
+	newbranchtemplate = feature/
+	editor = gvim
+	historybrowser = gitk
+[difftool]
+	prompt = false
+[init]
+    	templatedir = ~/.revenant/.git-templates
+[help]
+    	autocorrect = 1
+[include]
+    	# For username / github token / etc
+    	#path = ~/.gitconfig.local
+[git-up "bundler"]
+	check = true
+[commit]
+	template = ~/.revenant/.git-commit-template
+[cola]
+	textwidth = 78
+	tabwidth = 4
