@@ -6,8 +6,8 @@
 [core]
 	pager = less -Mi -+F
 	safecrlf = warn
-	attributesfile = ~/.revenant/.gitattributes
-	excludesfile = ~/.revenant/.gitignore
+	attributesfile = ~/.revenant/dotfiles/.gitattributes
+	excludesfile = ~/.revenant/dotfiles/.gitignore
 	autocrlf = Input
 	editor = vi
 	filemode = true
@@ -199,7 +199,7 @@
 [difftool]
 	prompt = false
 [init]
-    	templatedir = ~/.revenant/.git-templates
+    	templatedir = ~/.revenant/dotfiles/.git-templates
 [help]
     	autocorrect = 1
 [include]
@@ -208,7 +208,7 @@
 [git-up "bundler"]
 	check = true
 [commit]
-	template = ~/.revenant/.git-commit-template
+	template = ~/.revenant/dotfiles/.git-commit-template
 [cola]
 	textwidth = 78
 	tabwidth = 4
